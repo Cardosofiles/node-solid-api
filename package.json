@@ -13,11 +13,13 @@
   "description": "",
   "devDependencies": {
     "@types/node": "22.9.3",
+    "prisma": "5.22.0",
     "tsup": "8.3.5",
     "tsx": "4.19.2",
     "typescript": "5.7.2"
   },
   "dependencies": {
+    "@prisma/client": "5.22.0",
     "dotenv": "16.4.5",
     "fastify": "5.1.0",
     "zod": "3.23.8"
