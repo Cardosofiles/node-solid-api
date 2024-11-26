@@ -2,25 +2,15 @@ import { compare } from "bcryptjs";
 
 import { describe, expect, it } from "vitest";
 
+import { InMemoryUsersRepository } from "@/repositories/in-memory/in-memory-users-repository";
+import { UserAlreadyExistsError } from "./error/user-already-exists-error";
 import { RegisterService } from "./register";
 
 describe("Register Service", () => {
+  // first test
   it("should hash user password upon registration", async () => {
-    const registerService = new RegisterService({
-      async findByEmail(email) {
-        return null;
-      },
-
-      async create(data) {
-        return {
-          id: "user-1",
-          email: data.email,
-          username: data.username,
-          password_hash: data.password_hash,
-          created_at: new Date(),
-        };
-      },
-    });
+    const usersRepository = new InMemoryUsersRepository();
+    const registerService = new RegisterService(usersRepository);
 
     const { user } = await registerService.execute({
       email: "cardoso123@outlook.com",
@@ -34,5 +24,41 @@ describe("Register Service", () => {
     );
 
     expect(isPasswordCorrectlyHashed).toBe(true);
+  });
+
+  // second test
+  it("should not be able to register with email twice", async () => {
+    const usersRepository = new InMemoryUsersRepository();
+    const registerService = new RegisterService(usersRepository);
+
+    const email = "test_unit@example.com";
+
+    await registerService.execute({
+      email,
+      password: "test123",
+      username: "testUser",
+    });
+
+    expect(() =>
+      registerService.execute({
+        email,
+        password: "test123",
+        username: "testUser",
+      })
+    ).rejects.toBeInstanceOf(UserAlreadyExistsError);
+  });
+
+  // third test
+  it("should be able to register", async () => {
+    const usersRepository = new InMemoryUsersRepository();
+    const registerService = new RegisterService(usersRepository);
+
+    const { user } = await registerService.execute({
+      email: "cardoso123@outlook.com",
+      password: "test123",
+      username: "testUser",
+    });
+
+    expect(user.id).toEqual(expect.any(String));
   });
 });
