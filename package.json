@@ -7,7 +7,8 @@
     "start": "node build/server.js",
     "build": "tsup src --out-dir build",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +16,7 @@
   "description": "",
   "devDependencies": {
     "@types/node": "22.9.3",
+    "@vitest/coverage-v8": "2.1.5",
     "prisma": "5.22.0",
     "tsup": "8.3.5",
     "tsx": "4.19.2",
