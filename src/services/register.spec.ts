@@ -1,17 +1,22 @@
 import { compare } from "bcryptjs";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import { InMemoryUsersRepository } from "@/repositories/in-memory/in-memory-users-repository";
 import { RegisterService } from "@/services/register";
 import { UserAlreadyExistsError } from "./error/user-already-exists-error";
 
+let usersRepository: InMemoryUsersRepository;
+let sutRegisterService: RegisterService;
+
 describe("Register Service", () => {
+  beforeEach(() => {
+    usersRepository = new InMemoryUsersRepository();
+    sutRegisterService = new RegisterService(usersRepository);
+  });
+
   // first test
   it("should hash user password upon registration", async () => {
-    const usersRepository = new InMemoryUsersRepository();
-    const registerService = new RegisterService(usersRepository);
-
-    const { user } = await registerService.execute({
+    const { user } = await sutRegisterService.execute({
       email: "cardoso123@outlook.com",
       password: "test123",
       username: "testUser",
@@ -27,19 +32,16 @@ describe("Register Service", () => {
 
   // second test
   it("should not be able to register with email twice", async () => {
-    const usersRepository = new InMemoryUsersRepository();
-    const registerService = new RegisterService(usersRepository);
-
     const email = "test_unit@example.com";
 
-    await registerService.execute({
+    await sutRegisterService.execute({
       email,
       password: "test123",
       username: "testUser",
     });
 
     await expect(() =>
-      registerService.execute({
+      sutRegisterService.execute({
         email,
         password: "test123",
         username: "testUser",
@@ -49,10 +51,7 @@ describe("Register Service", () => {
 
   // third test
   it("should be able to register", async () => {
-    const usersRepository = new InMemoryUsersRepository();
-    const registerService = new RegisterService(usersRepository);
-
-    const { user } = await registerService.execute({
+    const { user } = await sutRegisterService.execute({
       email: "cardoso123@outlook.com",
       password: "test123",
       username: "testUser",

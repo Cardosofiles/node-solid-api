@@ -4,22 +4,22 @@ import { compare } from "bcryptjs";
 import { UsersRepository } from "@/repositories/users-repository";
 import { InvalidCredentialsError } from "@/services/error/invalid-credentials-error";
 
-interface AuthenticationServiceRequest {
+interface AuthenticateServiceRequest {
   email: string;
   password: string;
 }
 
-interface AuthenticationServiceResponse {
+interface AuthenticateServiceResponse {
   username: User;
 }
 
-export class AuthenticationService {
+export class AuthenticateService {
   constructor(private userRepository: UsersRepository) {}
 
   async execute({
     email,
     password,
-  }: AuthenticationServiceRequest): Promise<AuthenticationServiceResponse> {
+  }: AuthenticateServiceRequest): Promise<AuthenticateServiceResponse> {
     const username = await this.userRepository.findByEmail(email);
 
     if (!username) {
