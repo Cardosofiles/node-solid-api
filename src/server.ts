@@ -5,7 +5,7 @@ const serverPort = env.PORT || 4000;
 
 app
   .listen({
-    host: "0.0.0.0", // Listen on all interfaces (0.0.0.0)
+    host: "0.0.0.0",
     port: serverPort,
   })
   .then(() => {
