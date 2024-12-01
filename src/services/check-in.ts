@@ -18,6 +18,15 @@ export class CheckInService {
     userId,
     gymId,
   }: CheckInServiceRequest): Promise<CheckInServiceResponse> {
+    const checkInOnSameDay = await this.checkInsRepository.findByUserIdOnDate(
+      userId,
+      new Date()
+    );
+
+    if (checkInOnSameDay) {
+      throw new Error("User already checked in today.");
+    }
+
     const checkIn = await this.checkInsRepository.create({
       gym_id: gymId,
       userId: userId,
