@@ -4,6 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { InMemoryCheckInsRepository } from "@/repositories/in-memory/in-memory-check-ins-repository";
 import { InMemoryGymsRepository } from "@/repositories/in-memory/in-memory-gyms-repository";
 import { CheckInService } from "@/services/check-in";
+import { MaxDistanceError } from "./error/max-distance-error";
+import { MaxNumberOfCheckInsError } from "./error/max-number-of-check-ins-error";
 
 let checkInsRepository: InMemoryCheckInsRepository;
 let gymsRepository: InMemoryGymsRepository;
@@ -15,18 +17,18 @@ const gymLatitude = -18.956255;
 const gymLongitude = -48.2934849;
 
 describe("Check-in Service", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     checkInsRepository = new InMemoryCheckInsRepository();
     gymsRepository = new InMemoryGymsRepository();
     sutCheckInsService = new CheckInService(checkInsRepository, gymsRepository);
 
-    gymsRepository.items.push({
+    await gymsRepository.create({
       id: "gym-01",
       title: "TypeScript Academy",
       phone: "",
       description: "",
-      latitude: new Decimal(userLatitude),
-      longitude: new Decimal(userLongitude),
+      latitude: userLatitude,
+      longitude: userLongitude,
     });
 
     vi.useFakeTimers();
@@ -66,7 +68,7 @@ describe("Check-in Service", () => {
         userLatitude: userLatitude,
         userLongitude: userLongitude,
       })
-    ).rejects.toBeInstanceOf(Error);
+    ).rejects.toBeInstanceOf(MaxNumberOfCheckInsError);
   });
 
   // third test
@@ -107,6 +109,6 @@ describe("Check-in Service", () => {
         userLatitude: userLatitude,
         userLongitude: userLongitude,
       })
-    ).rejects.toBeInstanceOf(Error);
+    ).rejects.toBeInstanceOf(MaxDistanceError);
   });
 });
